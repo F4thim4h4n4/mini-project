@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexHostel | Premium Hostel Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./supabase.js"></script>
+    <script src="./supabase-client.js"></script>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="glass-card main-wrapper">
+            <!-- Left: Hero Brand Section -->
+            <div class="hero-brand">
+                <div class="hero-bg-overlay"></div>
+                <img src="assets/hero.png" alt="Smart Hostel" class="hero-image">
+
+                <div class="hero-content">
+                    <div class="brand-badge">Premium Management</div>
+                    <h1 class="gradient-text">NexHostel</h1>
+                    <p>Experience the future of student living with our seamless, automated management system.</p>
+
+                    <div class="hero-footer">
+                        <div class="stat-item">
+                            <span class="stat-val">2.5k+</span>
+                            <span class="stat-label">Residents</span>
+                        </div>
+                        <div class="stat-sep"></div>
+                        <div class="stat-item">
+                            <span class="stat-val">15+</span>
+                            <span class="stat-label">Campuses</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Form Section -->
+            <div class="form-section">
+                <div class="portal-toggle">
+                    <button class="portal-btn active" id="student-portal" onclick="switchPortal('student')">Student
+                        Portal</button>
+                    <button class="portal-btn" id="admin-portal" onclick="window.location.href='admin-login.html'">Admin
+                        Access</button>
+                </div>
+
+                <div class="form-header">
+                    <h2 id="form-title">Welcome Back</h2>
+                    <p id="form-subtitle">Enter your credentials to access your dashboard.</p>
+                </div>
+
+                <div class="auth-tabs-container" id="auth-tabs">
+                    <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+                    <button class="tab-btn" onclick="switchTab('register')">New Account</button>
+                </div>
+
+                <form id="auth-form" class="auth-form" onsubmit="handleAuth(event)">
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="username" placeholder="e.g. johndoe" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-row">
+                            <label for="password">Password</label>
+                            <a href="#" class="forgot-link">Forgot?</a>
+                        </div>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock"></i>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div id="register-fields" style="display: none;" class="animate-fade-in">
+                        <div class="input-group">
+                            <label for="role">Requested Role</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="shield"></i>
+                                <select id="role">
+                                    <option value="student">Student/Resident</option>
+                                    <option value="admin">Warden/Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-btn">
+                        <span id="btn-text">Access Dashboard</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    <p id="footer-login-text">Applying for a room? <a href="admission.html" class="primary-link">Start
+                            Admission</a></p>
+                    <div class="footer-bottom">
+                        <a href="#">Security</a>
+                        <span class="dot"></span>
+                        <a href="#">Privacy</a>
+                        <span class="dot"></span>
+                        <a href="#">Help Center</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .main-wrapper {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            min-height: 700px;
+            overflow: visible;
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+            border-radius: 32px;
+        }
+
+        /* --- Hero Brand Styles --- */
+        .hero-brand {
+            flex: 1.1;
+            position: relative;
+            background: #000;
+            display: none;
+            padding: 60px;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        @media (min-width: 992px) {
+            .hero-brand {
+                display: flex;
+            }
+        }
+
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+
+        .hero-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.9) 80%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 450px;
+        }
+
+        .hero-footer {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-sep {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Form Section Styles --- */
+        .form-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(20px);
+        }
+
+        .portal-toggle {
+            display: flex;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 6px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .portal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .portal-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-muted);
+        }
+
+        .auth-tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: white;
+            border-bottom-color: var(--primary);
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .forgot-link {
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            padding-left: 45px !important;
+            height: 54px;
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 54px;
+            margin-top: 10px;
+            font-size: 1.05rem;
+        }
+
+        .primary-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-bottom {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-bottom a {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .dot {
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 40px 30px;
+            }
+
+            .login-container {
+                padding: 15px;
+            }
+
+            .main-wrapper {
+                height: auto;
+            }
+        }
+    </style>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let currentMode = 'login';
+        let supabase = null;
+
+        // --- GLOBAL FUNCTIONS (Defined at top for availability) ---
+
+        window.switchPortal = function (portal) {
+            const studentBtn = document.getElementById('student-portal');
+            const adminBtn = document.getElementById('admin-portal');
+            const authTabs = document.getElementById('auth-tabs');
+            const footerText = document.getElementById('footer-login-text');
+            const title = document.getElementById('form-title');
+            const formSection = document.querySelector('.form-section');
+
+            if (!studentBtn || !adminBtn) return;
+
+            studentBtn.classList.remove('active');
+            adminBtn.classList.remove('active');
+
+            if (portal === 'admin') {
+                adminBtn.classList.add('active');
+                if (authTabs) authTabs.style.visibility = 'hidden'; 
+                if (footerText) footerText.innerHTML = "Warden forgot password? <a href='#' class='primary-link'>Contact IT Support</a>";
+                if (title) title.innerText = "Warden Security Portal";
+                if (formSection) formSection.style.background = "rgba(88, 28, 135, 0.15)"; 
+                switchTab('login');
+            } else {
+                studentBtn.classList.add('active');
+                if (authTabs) authTabs.style.visibility = 'visible';
+                if (footerText) footerText.innerHTML = "Applying for a room? <a href='admission.html' class='primary-link'>Start Admission</a>";
+                if (title) title.innerText = "Welcome Back";
+                if (formSection) formSection.style.background = "rgba(30, 41, 59, 0.4)";
+            }
+        };
+
+        window.switchTab = function (mode) {
+            currentMode = mode;
+            const subtitle = document.getElementById('form-subtitle');
+            const btnText = document.getElementById('btn-text');
+            const registerFields = document.getElementById('register-fields');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if (tabs.length > 0) tabs.forEach(t => t.classList.remove('active'));
+
+            if (mode === 'register') {
+                if (tabs[1]) tabs[1].classList.add('active');
+                if (subtitle) subtitle.innerText = "Join our community today.";
+                if (btnText) btnText.innerText = "Create Account";
+                if (registerFields) registerFields.style.display = 'block';
+            } else {
+                if (tabs[0]) tabs[0].classList.add('active');
+                if (subtitle) subtitle.innerText = "Enter your credentials to access your dashboard.";
+                if (btnText) btnText.innerText = "Log Into Portal";
+                if (registerFields) registerFields.style.display = 'none';
+            }
+        };
+
+        window.handleAuth = async function (e) {
+            e.preventDefault();
+            
+            // Check if supabase is initialized
+            if (!supabase) {
+                supabase = window._supabaseClient;
+                if (!supabase) {
+                    alert('Supabase client is not initialized. Please refresh the page.');
+                    return;
+                }
+            }
+
+            const username = document.getElementById('username')?.value.trim();
+            const password = document.getElementById('password')?.value;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const btnTextSpan = document.getElementById('btn-text');
+            const originalBtnText = btnTextSpan ? btnTextSpan.innerText : 'Access Dashboard';
+
+            if (btn) btn.disabled = true;
+            if (btnTextSpan) btnTextSpan.innerText = 'Processing...';
+
+            try {
+                if (currentMode === 'register') {
+                    const generatedEmail = username + "@nexhostel.com";
+                    console.log('Registering:', { name: username, email: generatedEmail });
+
+                    const { data, error } = await supabase
+                        .from('student')
+                        .insert([{ email: generatedEmail, name: username, password: password }])
+                        .select();
+
+                    console.log('Register result:', data, error);
+                    if (error) {
+                        if (error.message.includes('permission') || error.code === '42501') {
+                            alert('Database Error: Row Level Security is blocking this. Please disable RLS on the student table in Supabase dashboard.');
+                        } else {
+                            alert('Registration Error: ' + error.message);
+                        }
+                        return;
+                    }
+                    alert('Registration successful! Please login.');
+                    switchTab('login');
+
+                } else {
+                    console.log('Logging in as:', username);
+
+                    const { data: rows, error } = await supabase
+                        .from('student')
+                        .select('*')
+                        .eq('name', username)
+                        .eq('password', password)
+                        .limit(1);
+
+                    const data = rows && rows.length > 0 ? rows[0] : null;
+
+                    console.log('Login result:', data, error);
+
+                    if (error) {
+                        if (error.message.includes('permission') || error.code === '42501') {
+                            alert('Database Error: Row Level Security is blocking this.\n\nGo to Supabase dashboard → SQL Editor and run:\nALTER TABLE public.student DISABLE ROW LEVEL SECURITY;');
+                        } else {
+                            alert('Connection Error: ' + error.message);
+                        }
+                        return;
+                    }
+                    if (!data) {
+                        alert('Invalid username or password.\n\nTip: If you have not registered yet, click "New Account" first.');
+                        return;
+                    }
+
+                    // Store user session in localStorage
+                    localStorage.setItem('user', JSON.stringify(data));
+                    console.log('Login successful, redirecting to dashboard...');
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (err) {
+                console.error('Auth error:', err);
+                alert('Error: ' + err.message);
+            } finally {
+                if (btn) btn.disabled = false;
+                if (btnTextSpan) btnTextSpan.innerText = originalBtnText;
+                if (window.lucide) lucide.createIcons();
+            }
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM fully loaded and parsed');
+            try {
+                // Initialize Supabase from global client
+                supabase = window._supabaseClient;
+                if (!supabase) console.warn('Supabase client not found on load.');
+                
+                // Initialize Lucide icons safely
+                if (window.lucide) {
+                    lucide.createIcons();
+                } else {
+                    console.warn('Lucide not loaded yet.');
+                }
+            } catch (e) {
+                console.error('Initialization error:', e);
+            }
+        });
+    </script>
+</body>
+
+</html>

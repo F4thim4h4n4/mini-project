@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission | NexHostel</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./supabase.js"></script>
+    <script src="./supabase-client.js"></script>
+</head>
+
+<body class="dashboard-body flex-center">
+    <div class="glass-card admission-form animate-fade-in"
+        style="max-width: 800px; width: 100%; padding: 50px; margin: 20px;">
+        <div class="header" style="text-align: center; margin-bottom: 40px;">
+            <h1 class="gradient-text">Hostel Admission</h1>
+            <p>Fill in the details to apply for a room allocation.</p>
+        </div>
+
+        <form onsubmit="submitAdmission(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Roll Number / ID</label>
+                    <input type="text" placeholder="CS2024001" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" placeholder="+91 9876543210" required>
+                </div>
+                <div class="input-group">
+                    <label>Course/Department</label>
+                    <input type="text" placeholder="B.Tech Computer Science" required>
+                </div>
+                <div class="input-group">
+                    <label>Gender</label>
+                    <select>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Preferred Room Type</label>
+                    <select id="room-type">
+                        <option>Single (Premium)</option>
+                        <option>Double (Shared)</option>
+                        <option>Triple (Economy)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Permanent Address</label>
+                <textarea rows="3" placeholder="Enter your full address..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                <a href="index.html" style="color: white; text-decoration: none; opacity: 0.8;">Back to Login</a>
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const supabase = window._supabaseClient;
+        lucide.createIcons();
+
+        window.submitAdmission = async function (e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = 'Submitting...';
+
+            const formData = {
+                name: e.target.querySelector('input[placeholder="John Doe"]').value,
+                roll_no: e.target.querySelector('input[placeholder="CS2024001"]').value,
+                phone: e.target.querySelector('input[placeholder="+91 9876543210"]').value,
+                address: e.target.querySelector('textarea').value,
+                gender: e.target.querySelector('select').value
+            };
+
+            try {
+                const generatedEmail = `${formData.roll_no.toLowerCase()}@nexhostel.com`;
+                const { error: studentError } = await supabase
+                    .from('student')
+                    .insert([{
+                        email: generatedEmail,
+                        name: formData.name,
+                        password: 'student123', 
+                        phone: formData.phone,
+                        dept: 'Unassigned', 
+                        year: '1'
+                    }]);
+
+                if (studentError) throw studentError;
+
+                alert('Application successful! Your login email is ' + generatedEmail + ' and password is "student123"');
+                window.location.href = 'index.html';
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+                btn.disabled = false;
+                btn.innerText = 'Submit Application';
+            }
+        }
+    </script>
+</body>
+
+</html>
