@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Home, CreditCard, AlertCircle, Settings, LogOut, 
-  Search, Bell, Wrench, Wifi, Megaphone, Clock 
+  Search, Bell, Wrench, Wifi, Megaphone, Clock, User, ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,16 +66,9 @@ const Dashboard = () => {
             <Settings size={20} /> Settings
           </a>
         </nav>
-        <div className="user-profile" style={{ paddingTop: '20px', borderTop: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div className="avatar" style={{ width: '40px', height: '40px', background: 'var(--primary)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-          <div className="user-info" style={{ flex: 1 }}>
-            <h4 style={{ fontSize: '0.95rem', margin: 0 }}>{displayName}</h4>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Room 402</span>
-          </div>
-          <a href="#" className="logout-btn" onClick={handleLogout} style={{ color: 'var(--text-muted)' }}>
-            <LogOut size={20} />
+        <div className="user-profile" style={{ paddingTop: '20px', borderTop: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <a href="#" className="logout-btn" onClick={handleLogout} style={{ color: 'var(--text-danger)', display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', fontWeight: '600' }}>
+            <LogOut size={20} /> Logout
           </a>
         </div>
       </div>
@@ -86,11 +80,94 @@ const Dashboard = () => {
             <Search size={18} style={{ color: 'var(--text-muted)' }}/>
             <input type="text" placeholder="Search facilities, staff..." style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none', width: '100%' }} />
           </div>
-          <div className="header-actions">
-            <button className="icon-btn" style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', position: 'relative' }}>
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button className="icon-btn" style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} />
               <span className="badge" style={{ position: 'absolute', top: -2, right: -2, background: 'var(--danger)', width: 8, height: 8, borderRadius: '50%'}}></span>
             </button>
+            
+            {/* New Profile Dropdown */}
+            <div className="profile-container" style={{ position: 'relative' }}>
+              <button 
+                className="profile-trigger" 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                style={{ 
+                  background: 'var(--glass)', 
+                  border: '1px solid var(--glass-border)', 
+                  padding: '5px 12px', 
+                  borderRadius: '12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '10px', 
+                  cursor: 'pointer',
+                  color: 'white',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <div className="avatar-small" style={{ width: '32px', height: '32px', background: 'var(--primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                  {displayName.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600 }}>{displayName}</p>
+                  <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-muted)' }}>Room 402</p>
+                </div>
+                <ChevronDown size={16} style={{ transform: isProfileOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s ease' }} />
+              </button>
+
+              {isProfileOpen && (
+                <div className="profile-dropdown glass-card shadow-lg" style={{ 
+                  position: 'absolute', 
+                  top: 'calc(100% + 15px)', 
+                  right: 0, 
+                  width: '260px', 
+                  padding: '20px', 
+                  borderRadius: '20px', 
+                  zIndex: 100,
+                  animation: 'slideDown 0.3s ease forwards',
+                  background: 'var(--surface)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid var(--surface-border)'
+                }}>
+                  <div style={{ textAlign: 'center', marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid var(--surface-border)' }}>
+                    <div style={{ width: '60px', height: '60px', background: 'var(--primary)', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.5rem', margin: '0 auto 10px' }}>
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                    <h4 style={{ margin: '0 0 4px 0' }}>{displayName}</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email || 'student@nexhostel.com'}</p>
+                  </div>
+                  
+                  <div className="dropdown-menu" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button className="nav-item" style={{ width: '100%', textAlign: 'left', justifyContent: 'flex-start', padding: '10px 15px', background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <User size={18} /> My Profile
+                    </button>
+                    <button className="nav-item" style={{ width: '100%', textAlign: 'left', justifyContent: 'flex-start', padding: '10px 15px', background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Settings size={18} /> Account Settings
+                    </button>
+                    <div style={{ margin: '8px 0', borderTop: '1px solid var(--surface-border)' }}></div>
+                    <button 
+                      className="nav-item" 
+                      onClick={handleLogout}
+                      style={{ 
+                        width: '100%', 
+                        textAlign: 'left', 
+                        justifyContent: 'flex-start', 
+                        padding: '10px 15px', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: '#f87171', 
+                        cursor: 'pointer', 
+                        borderRadius: '10px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px' 
+                      }}
+                    >
+                      <LogOut size={18} /> Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -104,32 +181,41 @@ const Dashboard = () => {
               <button className="btn btn-primary" style={{ padding: '12px 24px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>Pay Fees</button>
             </div>
 
+            <h2 style={{ marginBottom: '20px', fontSize: '1.5rem' }}>Hostel & Room Availability</h2>
             <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' }}>
-              <div className="glass-card stat-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px', borderRadius: '24px', cursor: 'pointer' }}>
-                <div className="stat-img-wrapper" style={{ width: '60px', height: '60px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--surface-border)' }}>
-                  <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=200&h=200&auto=format&fit=crop" alt="Room" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div className="glass-card stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>BLOCK A</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--success)', background: 'rgba(52, 211, 153, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>5 Left</span>
                 </div>
-                <div className="stat-inner">
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Current Room</label>
-                  <h3 style={{ margin: 0 }}>402-B (Triple)</h3>
-                </div>
-              </div>
-              <div className="glass-card stat-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px', borderRadius: '24px', cursor: 'pointer' }}>
-                <div className="stat-img-wrapper" style={{ width: '60px', height: '60px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--surface-border)' }}>
-                  <img src="https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=200&h=200&auto=format&fit=crop" alt="Fees" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div className="stat-inner">
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Fees Status</label>
-                  <h3 className="success-text" style={{ margin: 0, color: 'var(--success)' }}>Paid (Jan)</h3>
+                <h3 style={{ margin: '0 0 5px 0' }}>1 Person / Room</h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Premium Suite</p>
+                <div style={{ marginTop: '15px', borderTop: '1px solid var(--surface-border)', paddingTop: '15px' }}>
+                  <button onClick={() => navigate('/apply-admission')} style={{ width: '100%', padding: '8px', background: 'var(--primary)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '0.85rem' }}>Book Now</button>
                 </div>
               </div>
-              <div className="glass-card stat-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px', borderRadius: '24px', cursor: 'pointer' }}>
-                <div className="stat-img-wrapper" style={{ width: '60px', height: '60px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--surface-border)' }}>
-                  <img src="https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=200&h=200&auto=format&fit=crop" alt="Complaints" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              
+              <div className="glass-card stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>BLOCK B</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--success)', background: 'rgba(52, 211, 153, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>12 Left</span>
                 </div>
-                <div className="stat-inner">
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Active Complaints</label>
-                  <h3 style={{ margin: 0 }}>2 Pending</h3>
+                <h3 style={{ margin: '0 0 5px 0' }}>2 Persons / Room</h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Shared Comfort</p>
+                <div style={{ marginTop: '15px', borderTop: '1px solid var(--surface-border)', paddingTop: '15px' }}>
+                  <button onClick={() => navigate('/admission')} style={{ width: '100%', padding: '8px', background: 'var(--primary)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '0.85rem' }}>Book Now</button>
+                </div>
+              </div>
+
+              <div className="glass-card stat-card" style={{ padding: '24px', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>BLOCK C</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--danger)', background: 'rgba(239, 68, 68, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>2 Left</span>
+                </div>
+                <h3 style={{ margin: '0 0 5px 0' }}>3 Persons / Room</h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Economy Plus</p>
+                <div style={{ marginTop: '15px', borderTop: '1px solid var(--surface-border)', paddingTop: '15px' }}>
+                  <button onClick={() => navigate('/apply-admission')} style={{ width: '100%', padding: '8px', background: 'var(--primary)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '0.85rem' }}>Book Now</button>
                 </div>
               </div>
             </div>
