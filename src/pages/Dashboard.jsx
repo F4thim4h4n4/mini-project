@@ -4,6 +4,7 @@ import {
   Search, Bell, Wrench, Wifi, Megaphone, Clock, User, ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import bgImage from '../assets/bg.png';
 
 // Assuming supabase is globally available or imported if needed later
 // For now, we mimic the logic structure used in the HTML
@@ -43,11 +44,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-body" style={{ display: 'flex', backgroundColor: 'var(--bg-dark)' }}>
+    <div className="dashboard-body" style={{ display: 'flex', backgroundColor: 'var(--bg-dark)', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', position: 'relative' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 0 }}></div>
       {/* Sidebar */}
-      <div className="sidebar" style={{ width: '280px', height: '100vh', background: 'var(--surface)', backdropFilter: 'blur(20px)', borderRight: '1px solid var(--surface-border)', padding: '30px', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0 }}>
+      <div className="sidebar" style={{ width: '280px', height: '100vh', background: 'var(--surface)', backdropFilter: 'blur(20px)', borderRight: '1px solid var(--surface-border)', padding: '30px', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, zIndex: 1 }}>
         <div className="logo" style={{ marginBottom: '50px' }}>
-          <h2 className="gradient-text" style={{ fontSize: '1.8rem' }}>NexHostel</h2>
+          <h2 className="gradient-text" style={{ fontSize: '1.8rem' }}>Hostels</h2>
         </div>
         <nav style={{ flex: 1 }}>
           <a href="#" className={`nav-item ${activeSection === 'overview' ? 'active' : ''}`} onClick={(e) => {e.preventDefault(); setActiveSection('overview');}}>
@@ -74,7 +76,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="main-content" style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
+      <main className="main-content" style={{ flex: 1, padding: '40px', overflowY: 'auto', position: 'relative', zIndex: 1 }}>
         <header style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '20px', marginBottom: '40px' }}>
           <div className="search-bar" style={{ background: 'var(--glass)', padding: '10px 20px', borderRadius: '30px', display: 'flex', alignItems: 'center', gap: '10px', width: '400px', border: '1px solid var(--glass-border)' }}>
             <Search size={18} style={{ color: 'var(--text-muted)' }}/>
@@ -133,7 +135,7 @@ const Dashboard = () => {
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                     <h4 style={{ margin: '0 0 4px 0' }}>{displayName}</h4>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email || 'student@nexhostel.com'}</p>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user.email || 'student@hostels.com'}</p>
                   </div>
                   
                   <div className="dropdown-menu" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -173,7 +175,7 @@ const Dashboard = () => {
 
         {activeSection === 'overview' && (
           <section id="overview" className="content-section">
-            <div className="welcome-banner glass-card" style={{ padding: '40px', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.1))', borderRadius: '24px' }}>
+            <div className="welcome-banner glass-card" style={{ padding: '40px', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))', borderRadius: '24px' }}>
               <div>
                 <h1 style={{ margin: 0, fontSize: '2rem' }}>Welcome back, {displayName.split(' ')[0]}! 👋</h1>
                 <p style={{ margin: '10px 0 0', color: 'var(--text-muted)' }}>Your next fee payment is due in 5 days.</p>
